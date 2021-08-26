@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity implements TildaFilePicker.O
         btn.setOnClickListener(v -> {
             if (isStoragePermissionGranted()) {
                 TildaFilePicker tildaFilePicker = new TildaFilePicker(MainActivity.this);
-                tildaFilePicker.setOnTildaFileSelectListener(this);
-//            tildaFilePicker.setContentView(R.layout.bottom_sheet_select_files);
+                tildaFilePicker.setOnTildaFileSelectListener(list -> {});
                 tildaFilePicker.show();
             }
         });
