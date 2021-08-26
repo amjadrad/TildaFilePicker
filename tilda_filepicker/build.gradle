@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.amjadrad'
 
 android {
     compileSdkVersion 30
@@ -40,7 +42,6 @@ dependencies {
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
-    implementation 'jp.wasabeef:glide-transformations:4.2.0'
     //Zoom picture
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
 
