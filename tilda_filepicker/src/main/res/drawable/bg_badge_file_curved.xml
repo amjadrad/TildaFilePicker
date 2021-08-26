@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:color="#dddddd" tools:ignore="MissingPrefix">
+    <item>
+        <shape>
+            <corners android:radius="25dp" />
+            <solid android:color="@color/colorFileLight" />
+        </shape>
+    </item>
+</selector>
+

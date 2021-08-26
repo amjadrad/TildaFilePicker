@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    Main Colors-->
+    <color name="colorTransparent">#00ffffff</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorDark4">#444444</color>
+    <color name="colorDark7">#777777</color>
+    <color name="colorDark9">#999999</color>
+    <color name="colorLight1">#f3f3f3</color>
+    <color name="colorLight2">#eeeeee</color>
+    <color name="colorLight3">#dddddd</color>
+    <color name="colorBlue">#008aff</color>
+    <color name="colorSuccess">#3cb690</color>
+    <color name="colorSuccessLight">#00e676</color>
+    <color name="colorDanger">#ee283c</color>
+    <color name="colorWarning">#ffad0a</color>
+
+    <color name="colorGalleryLight">#22673AB7</color>
+    <color name="colorGalleryDark">#673AB7</color>
+
+    <color name="colorFileLight">#22008aff</color>
+    <color name="colorFileDark">#008aff</color>
+
+    <color name="colorMusicLight">#22FF5722</color>
+    <color name="colorMusicDark">#FF5722</color>
+
+    <color name="colorVideoLight">#224CAF50</color>
+    <color name="colorVideoDark">#4CAF50</color>
+
+
+</resources>

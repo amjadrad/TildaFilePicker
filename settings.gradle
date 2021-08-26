@@ -1,0 +1,3 @@
+include ':tilda_filepicker'
+include ':app'
+rootProject.name = "TildaFilePicker"
