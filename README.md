@@ -17,7 +17,7 @@ allprojects {
 
 ```
 dependencies {
-	        implementation 'com.github.amjadrad:TildaFilePicker:1.0'
+	        implementation 'com.github.amjadrad:TildaFilePicker:1.1'
 }
 ```
 
