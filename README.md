@@ -1,4 +1,8 @@
-# Tilda File Picker
+**What's new**
+
+Fix problem: 
+- CursorIndexOutOfBoundsException
+
 
 **How To Use.**
 
@@ -17,7 +21,7 @@ allprojects {
 
 ```
 dependencies {
-	        implementation 'com.github.amjadrad:TildaFilePicker:1.1'
+	        implementation 'com.github.amjadrad:TildaFilePicker:1.2'
 }
 ```
 
