@@ -1,14 +1,34 @@
 package ir.tildaweb.tilda_filepicker.models;
 
+import android.content.Intent;
+
 import ir.tildaweb.tilda_filepicker.enums.FileMimeType;
 
 public class FileModel {
 
+    private Integer id;
+    private Intent extraData;
     private String path;
     private String title;
     private FileMimeType fileMimeType;
     private boolean selected;
     private int selectionNumber;
+
+    public Intent getExtraData() {
+        return extraData;
+    }
+
+    public void setExtraData(Intent extraData) {
+        this.extraData = extraData;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public int getSelectionNumber() {
         return selectionNumber;
