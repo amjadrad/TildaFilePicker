@@ -21,13 +21,14 @@ allprojects {
 
 ```
 dependencies {
-	        implementation 'com.github.amjadrad:TildaFilePicker:1.2'
+	        implementation 'com.github.amjadrad:TildaFilePicker:1.4'
 }
 ```
 
 3. Use in code
 ```
-                TildaFilePicker tildaFilePicker = new TildaFilePicker(MainActivity.this);
+                TildaFilePicker tildaFilePicker = new TildaFilePicker(MainActivity.this , new FileType[]{FileType.FILE_TYPE_FILE , FileType.FILE_TYPE_MUSIC});
+                tildaFilePicker.setSingleChoice();
                 tildaFilePicker.setOnTildaFileSelectListener(list -> {});
                 tildaFilePicker.show();
 ```
