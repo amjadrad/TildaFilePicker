@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirm">تایید</string>
+    <string name="not_found_picture">تصویری پیدا نشد.</string>
+    <string name="not_found_video">ویدِئویی پیدا نشد.</string>
+    <string name="not_found_file">فایلی پیدا نشد.</string>
+    <string name="not_found_music">موزیکی پیدا نشد.</string>
+    <string name="gallery">گالری</string>
+    <string name="video">ویدئو</string>
+    <string name="file">فایل</string>
+    <string name="music">موزیک</string>
+</resources>
