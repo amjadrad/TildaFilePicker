@@ -8,16 +8,15 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ir.tildaweb.tilda_filepicker.TildaFilePicker;
+import ir.tildaweb.tilda_filepicker.enums.FileType;
 import ir.tildaweb.tilda_filepicker.models.FileModel;
 
-public class MainActivity extends AppCompatActivity implements TildaFilePicker.OnTildaFileSelectListener {
+public class MainActivity extends AppCompatActivity {
 
     private String TAG = this.getClass().getName();
     private Button btn;
@@ -32,9 +31,10 @@ public class MainActivity extends AppCompatActivity implements TildaFilePicker.O
         btn = findViewById(R.id.btn);
         btn.setOnClickListener(v -> {
             if (isStoragePermissionGranted()) {
-                TildaFilePicker tildaFilePicker = new TildaFilePicker(MainActivity.this);
-                tildaFilePicker.setOnTildaFileSelectListener(list -> {});
-                tildaFilePicker.show();
+                TildaFilePicker tildaFilePicker = new TildaFilePicker(MainActivity.this, new FileType[]{FileType.FILE_TYPE_ALL});
+                tildaFilePicker.setSingleChoice();
+                tildaFilePicker.setOnTildaFileSelectListener(list -> Log.d(TAG, "onCreate: " + list.get(0).getPath()));
+                tildaFilePicker.show(getSupportFragmentManager());
             }
         });
     }
@@ -48,10 +48,4 @@ public class MainActivity extends AppCompatActivity implements TildaFilePicker.O
         return true;
     }
 
-    @Override
-    public void onFilePicks(List<FileModel> list) {
-        for (FileModel model : list) {
-            Log.d(TAG, "onFilePicks: " + model.getPath());
-        }
-    }
 }

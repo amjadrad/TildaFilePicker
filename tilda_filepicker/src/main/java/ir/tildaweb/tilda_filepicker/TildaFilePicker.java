@@ -2,20 +2,29 @@ package ir.tildaweb.tilda_filepicker;
 
 
 import android.content.Context;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,39 +33,25 @@ import ir.tildaweb.tilda_filepicker.adapter.AdapterFiles;
 import ir.tildaweb.tilda_filepicker.adapter.AdapterImages;
 import ir.tildaweb.tilda_filepicker.adapter.AdapterMusics;
 import ir.tildaweb.tilda_filepicker.adapter.AdapterVideos;
+import ir.tildaweb.tilda_filepicker.databinding.BottomSheetSelectFilesBinding;
+import ir.tildaweb.tilda_filepicker.enums.FileMimeType;
+import ir.tildaweb.tilda_filepicker.enums.FileType;
 import ir.tildaweb.tilda_filepicker.models.FileModel;
 
-public class TildaFilePicker extends BottomSheetDialog implements TildaFilePresenter.OnDataPreparedListener, View.OnClickListener, AdapterImages.ImageListener, AdapterMusics.MusicListener, AdapterVideos.VideoListener, AdapterFiles.FileListener {
+public class TildaFilePicker extends BottomSheetDialogFragment implements TildaFilePresenter.OnDataPreparedListener, View.OnClickListener, AdapterImages.ImageListener, AdapterMusics.MusicListener, AdapterVideos.VideoListener, AdapterFiles.FileListener {
 
     private String TAG = this.getClass().getName();
+    private BottomSheetSelectFilesBinding binding;
     private TildaFilePresenter tildaFilePresenter;
     private AdapterImages adapterImages;
     private AdapterVideos adapterVideos;
     private AdapterMusics adapterMusics;
     private AdapterFiles adapterFiles;
     private AttachType currentAttachType;
-
-    private RecyclerView recyclerViewImages;
-    private RecyclerView recyclerViewVideos;
-    private RecyclerView recyclerViewMusics;
-    private RecyclerView recyclerViewFiles;
-
-    private CardView cardViewNavGallery;
-    private CardView cardViewNavFile;
-    private CardView cardViewNavMusic;
-    private CardView cardViewNavVideo;
-    private TextView tvNavGallery;
-    private TextView tvNavFile;
-    private TextView tvNavMusic;
-    private TextView tvNavVideo;
-    private AppCompatImageView imageViewNavGallery;
-    private AppCompatImageView imageViewNavFile;
-    private AppCompatImageView imageViewNavMusic;
-    private AppCompatImageView imageViewNavVideo;
-    private TextView tvNumberSelectedItems;
-    private AppCompatButton btnConfirm;
-    private LinearLayout linearAfterSelect;
     private OnTildaFileSelectListener onTildaFileSelectListener;
+    private FileType[] showJustTypes = {FileType.FILE_TYPE_ALL};
+    private Context context;
+    private boolean singleChoice = false;
 
     private enum AttachType {
         ATTACHE_TYPE_GALLERY,
@@ -71,62 +66,95 @@ public class TildaFilePicker extends BottomSheetDialog implements TildaFilePrese
 
 
     public TildaFilePicker(@NonNull Context context) {
-        super(context);
-        setContentView(R.layout.bottom_sheet_select_files);
+        this.context = context;
+    }
+
+    public TildaFilePicker(@NonNull Context context, FileType[] showJustTypes) {
+        this.context = context;
+        this.showJustTypes = showJustTypes;
+    }
+
+    public void setSingleChoice() {
+        this.singleChoice = true;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.ModalBottomSheetDialog);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return setUp(context);
+    }
+
+    private View setUp(Context context) {
+        binding = BottomSheetSelectFilesBinding.inflate(getLayoutInflater());
         tildaFilePresenter = new TildaFilePresenter(context, this);
+        binding.cardViewNavGallery.setOnClickListener(this);
+        binding.cardViewNavFile.setOnClickListener(this);
+        binding.cardViewNavMusic.setOnClickListener(this);
+        binding.cardViewNavVideo.setOnClickListener(this);
+        binding.btnConfirm.setOnClickListener(this);
 
-        //Find views
-        recyclerViewImages = findViewById(R.id.recyclerViewImages);
-        recyclerViewVideos = findViewById(R.id.recyclerViewVideos);
-        recyclerViewMusics = findViewById(R.id.recyclerViewMusics);
-        recyclerViewFiles = findViewById(R.id.recyclerViewFiles);
-        cardViewNavGallery = findViewById(R.id.cardViewNavGallery);
-        cardViewNavFile = findViewById(R.id.cardViewNavFile);
-        cardViewNavMusic = findViewById(R.id.cardViewNavMusic);
-        cardViewNavVideo = findViewById(R.id.cardViewNavVideo);
-        tvNavGallery = findViewById(R.id.tvNavGallery);
-        tvNavFile = findViewById(R.id.tvNavFile);
-        tvNavMusic = findViewById(R.id.tvNavMusic);
-        tvNavVideo = findViewById(R.id.tvNavVideo);
-        imageViewNavGallery = findViewById(R.id.imageViewNavGallery);
-        imageViewNavFile = findViewById(R.id.imageViewNavFile);
-        imageViewNavMusic = findViewById(R.id.imageViewNavMusic);
-        imageViewNavVideo = findViewById(R.id.imageViewNavVideo);
-        tvNumberSelectedItems = findViewById(R.id.tvNumberSelectedItems);
-        btnConfirm = findViewById(R.id.btnConfirm);
-        linearAfterSelect = findViewById(R.id.linearAfterSelect);
-
-        cardViewNavGallery.setOnClickListener(this);
-        cardViewNavFile.setOnClickListener(this);
-        cardViewNavMusic.setOnClickListener(this);
-        cardViewNavVideo.setOnClickListener(this);
-        btnConfirm.setOnClickListener(this);
-
-
-        recyclerViewImages.setLayoutManager(new GridLayoutManager(context, 3));
+        binding.recyclerViewImages.setLayoutManager(new GridLayoutManager(context, 3));
         adapterImages = new AdapterImages(context);
         adapterImages.setImageListener(this);
-        recyclerViewImages.setAdapter(adapterImages);
+        binding.recyclerViewImages.setAdapter(adapterImages);
 
-        recyclerViewVideos.setLayoutManager(new GridLayoutManager(context, 3));
+        binding.recyclerViewVideos.setLayoutManager(new GridLayoutManager(context, 3));
         adapterVideos = new AdapterVideos(context);
         adapterVideos.setVideoListener(this);
-        recyclerViewVideos.setAdapter(adapterVideos);
+        binding.recyclerViewVideos.setAdapter(adapterVideos);
 
-        recyclerViewMusics.setLayoutManager(new LinearLayoutManager(context));
+        binding.recyclerViewMusics.setLayoutManager(new LinearLayoutManager(context));
         adapterMusics = new AdapterMusics(context);
         adapterMusics.setMusicListener(this);
-        recyclerViewMusics.setAdapter(adapterMusics);
+        binding.recyclerViewMusics.setAdapter(adapterMusics);
 
 
-        recyclerViewFiles.setLayoutManager(new LinearLayoutManager(context));
+        binding.recyclerViewFiles.setLayoutManager(new LinearLayoutManager(context));
         adapterFiles = new AdapterFiles(context);
         adapterFiles.setFileListener(this);
-        recyclerViewFiles.setAdapter(adapterFiles);
+        binding.recyclerViewFiles.setAdapter(adapterFiles);
 
+        binding.cardViewNavFile.setVisibility(View.GONE);
+        binding.cardViewNavGallery.setVisibility(View.GONE);
+        binding.cardViewNavMusic.setVisibility(View.GONE);
+        binding.cardViewNavVideo.setVisibility(View.GONE);
+        for (FileType type : showJustTypes) {
+            if (type == FileType.FILE_TYPE_ALL) {
+                binding.cardViewNavFile.setVisibility(View.VISIBLE);
+                binding.cardViewNavGallery.setVisibility(View.VISIBLE);
+                binding.cardViewNavMusic.setVisibility(View.VISIBLE);
+                binding.cardViewNavVideo.setVisibility(View.VISIBLE);
+                binding.cardViewNavGallery.callOnClick();
+                break;
+            }
+            if (type == FileType.FILE_TYPE_IMAGE) {
+                binding.cardViewNavGallery.setVisibility(View.VISIBLE);
+                binding.cardViewNavGallery.callOnClick();
+            } else if (type == FileType.FILE_TYPE_MUSIC) {
+                binding.cardViewNavMusic.setVisibility(View.VISIBLE);
+                binding.cardViewNavMusic.callOnClick();
+            } else if (type == FileType.FILE_TYPE_VIDEO) {
+                binding.cardViewNavVideo.setVisibility(View.VISIBLE);
+                binding.cardViewNavVideo.callOnClick();
+            } else if (type == FileType.FILE_TYPE_FILE) {
+                binding.cardViewNavFile.setVisibility(View.VISIBLE);
+                binding.cardViewNavFile.callOnClick();
+            }
+        }
+        if (showJustTypes.length == 1 && showJustTypes[0] != FileType.FILE_TYPE_ALL) {
+            binding.cardViewNavFile.setVisibility(View.GONE);
+            binding.cardViewNavGallery.setVisibility(View.GONE);
+            binding.cardViewNavMusic.setVisibility(View.GONE);
+            binding.cardViewNavVideo.setVisibility(View.GONE);
+        }
 
-        cardViewNavGallery.callOnClick();
-
+        return binding.getRoot();
     }
 
     public void setOnTildaFileSelectListener(OnTildaFileSelectListener onTildaFileSelectListener) {
@@ -137,24 +165,62 @@ public class TildaFilePicker extends BottomSheetDialog implements TildaFilePrese
     public void onResponseImages(List<FileModel> list) {
         adapterImages.clearAll();
         adapterImages.addItems(list);
+        if (list.size() == 0) {
+            binding.linearNoGallery.setVisibility(View.VISIBLE);
+        } else {
+            binding.linearNoGallery.setVisibility(View.GONE);
+        }
+        binding.linearNoFile.setVisibility(View.GONE);
+        binding.linearNoMusic.setVisibility(View.GONE);
+        binding.linearNoVideo.setVisibility(View.GONE);
     }
 
     @Override
     public void onResponseFiles(List<FileModel> list) {
         adapterFiles.clearAll();
         adapterFiles.addItems(list);
+        if (list.size() == 0) {
+            binding.linearNoFile.setVisibility(View.VISIBLE);
+            binding.linearNoGallery.setVisibility(View.GONE);
+        } else {
+            binding.linearNoGallery.setVisibility(View.GONE);
+            binding.linearNoFile.setVisibility(View.GONE);
+        }
+        binding.linearNoMusic.setVisibility(View.GONE);
+        binding.linearNoVideo.setVisibility(View.GONE);
     }
 
     @Override
     public void onResponseMusics(List<FileModel> list) {
         adapterMusics.clearAll();
         adapterMusics.addItems(list);
+        if (list.size() == 0) {
+            binding.linearNoMusic.setVisibility(View.VISIBLE);
+            binding.linearNoGallery.setVisibility(View.GONE);
+            binding.linearNoFile.setVisibility(View.GONE);
+        } else {
+            binding.linearNoGallery.setVisibility(View.GONE);
+            binding.linearNoFile.setVisibility(View.GONE);
+            binding.linearNoMusic.setVisibility(View.GONE);
+        }
+        binding.linearNoVideo.setVisibility(View.GONE);
     }
 
     @Override
     public void onResponseVideos(List<FileModel> list) {
         adapterVideos.clearAll();
         adapterVideos.addItems(list);
+        if (list.size() == 0) {
+            binding.linearNoVideo.setVisibility(View.VISIBLE);
+            binding.linearNoGallery.setVisibility(View.GONE);
+            binding.linearNoFile.setVisibility(View.GONE);
+            binding.linearNoMusic.setVisibility(View.GONE);
+        } else {
+            binding.linearNoGallery.setVisibility(View.GONE);
+            binding.linearNoFile.setVisibility(View.GONE);
+            binding.linearNoMusic.setVisibility(View.GONE);
+            binding.linearNoVideo.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -177,133 +243,104 @@ public class TildaFilePicker extends BottomSheetDialog implements TildaFilePrese
             switch (currentAttachType) {
                 case ATTACHE_TYPE_GALLERY:
                     onTildaFileSelectListener.onFilePicks(adapterImages.getAllSelectedItems());
-                    cancel();
+                    dismiss();
                     break;
                 case ATTACHE_TYPE_FILE:
                     onTildaFileSelectListener.onFilePicks(adapterFiles.getAllSelectedItems());
-                    cancel();
+                    dismiss();
                     break;
                 case ATTACHE_TYPE_MUSIC:
                     onTildaFileSelectListener.onFilePicks(adapterMusics.getAllSelectedItems());
-                    cancel();
+                    dismiss();
                     break;
                 case ATTACHE_TYPE_VIDEO:
                     onTildaFileSelectListener.onFilePicks(adapterVideos.getAllSelectedItems());
-                    cancel();
+                    dismiss();
                     break;
             }
         }
-
-
     }
 
 
     private void changeSelectedAttachType(AttachType attachType) {
         this.currentAttachType = attachType;
-        linearAfterSelect.setVisibility(View.GONE);
+        binding.linearAfterSelect.setVisibility(View.GONE);
         switch (attachType) {
             case ATTACHE_TYPE_GALLERY: {
-
-                recyclerViewImages.setVisibility(View.VISIBLE);
-                recyclerViewMusics.setVisibility(View.GONE);
-                recyclerViewVideos.setVisibility(View.GONE);
-                recyclerViewFiles.setVisibility(View.GONE);
-
-                cardViewNavGallery.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorGalleryDark));
-                imageViewNavGallery.setColorFilter(getContext().getResources().getColor(R.color.colorWhite));
-                tvNavGallery.setTextColor(getContext().getResources().getColor(R.color.colorWhite));
-
-                cardViewNavFile.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorFileLight));
-                imageViewNavFile.setColorFilter(getContext().getResources().getColor(R.color.colorFileDark));
-                tvNavFile.setTextColor(getContext().getResources().getColor(R.color.colorFileDark));
-
-                cardViewNavMusic.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorMusicLight));
-                imageViewNavMusic.setColorFilter(getContext().getResources().getColor(R.color.colorMusicDark));
-                tvNavMusic.setTextColor(getContext().getResources().getColor(R.color.colorMusicDark));
-
-                cardViewNavVideo.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorVideoLight));
-                imageViewNavVideo.setColorFilter(getContext().getResources().getColor(R.color.colorVideoDark));
-                tvNavVideo.setTextColor(getContext().getResources().getColor(R.color.colorVideoDark));
-
+                binding.recyclerViewImages.setVisibility(View.VISIBLE);
+                binding.recyclerViewMusics.setVisibility(View.GONE);
+                binding.recyclerViewVideos.setVisibility(View.GONE);
+                binding.recyclerViewFiles.setVisibility(View.GONE);
+                binding.cardViewNavGallery.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorGalleryDark));
+                binding.imageViewNavGallery.setColorFilter(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.tvNavGallery.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.cardViewNavFile.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorFileLight));
+                binding.imageViewNavFile.setColorFilter(ContextCompat.getColor(context, R.color.colorFileDark));
+                binding.tvNavFile.setTextColor(ContextCompat.getColor(context, R.color.colorFileDark));
+                binding.cardViewNavMusic.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorMusicLight));
+                binding.imageViewNavMusic.setColorFilter(ContextCompat.getColor(context, R.color.colorMusicDark));
+                binding.tvNavMusic.setTextColor(ContextCompat.getColor(context, R.color.colorMusicDark));
+                binding.cardViewNavVideo.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorVideoLight));
+                binding.imageViewNavVideo.setColorFilter(ContextCompat.getColor(context, R.color.colorVideoDark));
+                binding.tvNavVideo.setTextColor(ContextCompat.getColor(context, R.color.colorVideoDark));
                 break;
             }
             case ATTACHE_TYPE_FILE: {
 
-                recyclerViewFiles.setVisibility(View.VISIBLE);
-                recyclerViewImages.setVisibility(View.GONE);
-                recyclerViewMusics.setVisibility(View.GONE);
-                recyclerViewVideos.setVisibility(View.GONE);
-
-                cardViewNavFile.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorFileDark));
-                imageViewNavFile.setColorFilter(getContext().getResources().getColor(R.color.colorWhite));
-                tvNavFile.setTextColor(getContext().getResources().getColor(R.color.colorWhite));
-
-                cardViewNavGallery.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorGalleryLight));
-                imageViewNavGallery.setColorFilter(getContext().getResources().getColor(R.color.colorGalleryDark));
-                tvNavGallery.setTextColor(getContext().getResources().getColor(R.color.colorGalleryDark));
-
-                cardViewNavMusic.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorMusicLight));
-                imageViewNavMusic.setColorFilter(getContext().getResources().getColor(R.color.colorMusicDark));
-                tvNavMusic.setTextColor(getContext().getResources().getColor(R.color.colorMusicDark));
-
-                cardViewNavVideo.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorVideoLight));
-                imageViewNavVideo.setColorFilter(getContext().getResources().getColor(R.color.colorVideoDark));
-                tvNavVideo.setTextColor(getContext().getResources().getColor(R.color.colorVideoDark));
-
-
+                binding.recyclerViewFiles.setVisibility(View.VISIBLE);
+                binding.recyclerViewImages.setVisibility(View.GONE);
+                binding.recyclerViewMusics.setVisibility(View.GONE);
+                binding.recyclerViewVideos.setVisibility(View.GONE);
+                binding.cardViewNavFile.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorFileDark));
+                binding.imageViewNavFile.setColorFilter(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.tvNavFile.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.cardViewNavGallery.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorGalleryLight));
+                binding.imageViewNavGallery.setColorFilter(ContextCompat.getColor(context, R.color.colorGalleryDark));
+                binding.tvNavGallery.setTextColor(ContextCompat.getColor(context, R.color.colorGalleryDark));
+                binding.cardViewNavMusic.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorMusicLight));
+                binding.imageViewNavMusic.setColorFilter(ContextCompat.getColor(context, R.color.colorMusicDark));
+                binding.tvNavMusic.setTextColor(ContextCompat.getColor(context, R.color.colorMusicDark));
+                binding.cardViewNavVideo.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorVideoLight));
+                binding.imageViewNavVideo.setColorFilter(ContextCompat.getColor(context, R.color.colorVideoDark));
+                binding.tvNavVideo.setTextColor(ContextCompat.getColor(context, R.color.colorVideoDark));
                 break;
             }
             case ATTACHE_TYPE_MUSIC: {
-
-                recyclerViewMusics.setVisibility(View.VISIBLE);
-                recyclerViewImages.setVisibility(View.GONE);
-                recyclerViewVideos.setVisibility(View.GONE);
-                recyclerViewFiles.setVisibility(View.GONE);
-
-
-                cardViewNavMusic.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorMusicDark));
-                imageViewNavMusic.setColorFilter(getContext().getResources().getColor(R.color.colorWhite));
-                tvNavMusic.setTextColor(getContext().getResources().getColor(R.color.colorWhite));
-
-                cardViewNavGallery.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorGalleryLight));
-                imageViewNavGallery.setColorFilter(getContext().getResources().getColor(R.color.colorGalleryDark));
-                tvNavGallery.setTextColor(getContext().getResources().getColor(R.color.colorGalleryDark));
-
-                cardViewNavFile.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorFileLight));
-                imageViewNavFile.setColorFilter(getContext().getResources().getColor(R.color.colorFileDark));
-                tvNavFile.setTextColor(getContext().getResources().getColor(R.color.colorFileDark));
-
-                cardViewNavVideo.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorVideoLight));
-                imageViewNavVideo.setColorFilter(getContext().getResources().getColor(R.color.colorVideoDark));
-                tvNavVideo.setTextColor(getContext().getResources().getColor(R.color.colorVideoDark));
-
-
+                binding.recyclerViewMusics.setVisibility(View.VISIBLE);
+                binding.recyclerViewImages.setVisibility(View.GONE);
+                binding.recyclerViewVideos.setVisibility(View.GONE);
+                binding.recyclerViewFiles.setVisibility(View.GONE);
+                binding.cardViewNavMusic.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorMusicDark));
+                binding.imageViewNavMusic.setColorFilter(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.tvNavMusic.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.cardViewNavGallery.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorGalleryLight));
+                binding.imageViewNavGallery.setColorFilter(ContextCompat.getColor(context, R.color.colorGalleryDark));
+                binding.tvNavGallery.setTextColor(ContextCompat.getColor(context, R.color.colorGalleryDark));
+                binding.cardViewNavFile.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorFileLight));
+                binding.imageViewNavFile.setColorFilter(ContextCompat.getColor(context, R.color.colorFileDark));
+                binding.tvNavFile.setTextColor(ContextCompat.getColor(context, R.color.colorFileDark));
+                binding.cardViewNavVideo.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorVideoLight));
+                binding.imageViewNavVideo.setColorFilter(ContextCompat.getColor(context, R.color.colorVideoDark));
+                binding.tvNavVideo.setTextColor(ContextCompat.getColor(context, R.color.colorVideoDark));
                 break;
             }
             case ATTACHE_TYPE_VIDEO: {
-
-                recyclerViewVideos.setVisibility(View.VISIBLE);
-                recyclerViewMusics.setVisibility(View.GONE);
-                recyclerViewImages.setVisibility(View.GONE);
-                recyclerViewFiles.setVisibility(View.GONE);
-
-                cardViewNavVideo.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorVideoDark));
-                imageViewNavVideo.setColorFilter(getContext().getResources().getColor(R.color.colorWhite));
-                tvNavVideo.setTextColor(getContext().getResources().getColor(R.color.colorWhite));
-
-                cardViewNavGallery.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorGalleryLight));
-                imageViewNavGallery.setColorFilter(getContext().getResources().getColor(R.color.colorGalleryDark));
-                tvNavGallery.setTextColor(getContext().getResources().getColor(R.color.colorGalleryDark));
-
-                cardViewNavFile.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorFileLight));
-                imageViewNavFile.setColorFilter(getContext().getResources().getColor(R.color.colorFileDark));
-                tvNavFile.setTextColor(getContext().getResources().getColor(R.color.colorFileDark));
-
-                cardViewNavMusic.setCardBackgroundColor(getContext().getResources().getColor(R.color.colorMusicLight));
-                imageViewNavMusic.setColorFilter(getContext().getResources().getColor(R.color.colorMusicDark));
-                tvNavMusic.setTextColor(getContext().getResources().getColor(R.color.colorMusicDark));
-
-
+                binding.recyclerViewVideos.setVisibility(View.VISIBLE);
+                binding.recyclerViewMusics.setVisibility(View.GONE);
+                binding.recyclerViewImages.setVisibility(View.GONE);
+                binding.recyclerViewFiles.setVisibility(View.GONE);
+                binding.cardViewNavVideo.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorVideoDark));
+                binding.imageViewNavVideo.setColorFilter(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.tvNavVideo.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
+                binding.cardViewNavGallery.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorGalleryLight));
+                binding.imageViewNavGallery.setColorFilter(ContextCompat.getColor(context, R.color.colorGalleryDark));
+                binding.tvNavGallery.setTextColor(ContextCompat.getColor(context, R.color.colorGalleryDark));
+                binding.cardViewNavFile.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorFileLight));
+                binding.imageViewNavFile.setColorFilter(ContextCompat.getColor(context, R.color.colorFileDark));
+                binding.tvNavFile.setTextColor(ContextCompat.getColor(context, R.color.colorFileDark));
+                binding.cardViewNavMusic.setCardBackgroundColor(ContextCompat.getColor(context, R.color.colorMusicLight));
+                binding.imageViewNavMusic.setColorFilter(ContextCompat.getColor(context, R.color.colorMusicDark));
+                binding.tvNavMusic.setTextColor(ContextCompat.getColor(context, R.color.colorMusicDark));
                 break;
             }
 
@@ -312,45 +349,51 @@ public class TildaFilePicker extends BottomSheetDialog implements TildaFilePrese
 
     @Override
     public void onImageSelectedSizeChanged(int selectedItemsSize) {
-
-        tvNumberSelectedItems.setText(String.format("%s: %d", "تعداد تصاویر انتخاب شده", selectedItemsSize));
-        if (selectedItemsSize == 0) {
-            linearAfterSelect.setVisibility(View.GONE);
+        Log.d(TAG, "onImageSelectedSizeChanged: " + singleChoice);
+        if (singleChoice) {
+            binding.btnConfirm.callOnClick();
         } else {
-            linearAfterSelect.setVisibility(View.VISIBLE);
+            binding.tvNumberSelectedItems.setText(String.format("%s: %s", "تعداد تصاویر انتخاب شده", selectedItemsSize));
+            if (selectedItemsSize == 0) {
+                binding.linearAfterSelect.setVisibility(View.GONE);
+            } else {
+                binding.linearAfterSelect.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     @Override
     public void onMusicSelectedSizeChanged(int selectedItemsSize) {
-        tvNumberSelectedItems.setText(String.format("%s: %d", "تعداد موزیک انتخاب شده", selectedItemsSize));
+        binding.tvNumberSelectedItems.setText(String.format("%s: %s", "تعداد موزیک انتخاب شده", selectedItemsSize));
         if (selectedItemsSize == 0) {
-            linearAfterSelect.setVisibility(View.GONE);
+            binding.linearAfterSelect.setVisibility(View.GONE);
         } else {
-            linearAfterSelect.setVisibility(View.VISIBLE);
+            binding.linearAfterSelect.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onVideoSelectedSizeChanged(int selectedItemsSize) {
-        tvNumberSelectedItems.setText(String.format("%s: %d", "تعداد ویدئو انتخاب شده", selectedItemsSize));
+        binding.tvNumberSelectedItems.setText(String.format("%s: %s", "تعداد ویدئو انتخاب شده", selectedItemsSize));
         if (selectedItemsSize == 0) {
-            linearAfterSelect.setVisibility(View.GONE);
+            binding.linearAfterSelect.setVisibility(View.GONE);
         } else {
-            linearAfterSelect.setVisibility(View.VISIBLE);
+            binding.linearAfterSelect.setVisibility(View.VISIBLE);
         }
     }
-
 
     @Override
     public void onFileSelectedSizeChanged(int selectedItemsSize) {
-        tvNumberSelectedItems.setText(String.format("%s: %d", "تعداد فایل انتخاب شده", selectedItemsSize));
+        binding.tvNumberSelectedItems.setText(String.format("%s: %s", "تعداد فایل انتخاب شده", selectedItemsSize));
         if (selectedItemsSize == 0) {
-            linearAfterSelect.setVisibility(View.GONE);
+            binding.linearAfterSelect.setVisibility(View.GONE);
         } else {
-            linearAfterSelect.setVisibility(View.VISIBLE);
+            binding.linearAfterSelect.setVisibility(View.VISIBLE);
         }
     }
 
-}
 
+    public void show(FragmentManager fragmentManager) {
+        show(fragmentManager, null);
+    }
+}

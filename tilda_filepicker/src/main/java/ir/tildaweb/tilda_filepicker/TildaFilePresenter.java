@@ -2,6 +2,8 @@ package ir.tildaweb.tilda_filepicker;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -32,7 +34,8 @@ public class TildaFilePresenter {
         assert cursor != null;
         if (cursor.moveToLast()) {
             do {
-                String absolutePath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+                String absolutePath = cursor.getString(index);
                 FileModel model = new FileModel();
                 model.setPath(absolutePath);
                 model.setFileMimeType(FileMimeType.FILE_MIME_TYPE_IMAGE);
@@ -53,13 +56,14 @@ public class TildaFilePresenter {
         String mimeTypeRar = MimeTypeMap.getSingleton().getMimeTypeFromExtension("rar");
         String mimeTypeText = MimeTypeMap.getSingleton().getMimeTypeFromExtension("txt");
         String mimeTypeHtml = MimeTypeMap.getSingleton().getMimeTypeFromExtension("html");
-        String[] selectionArgsPdf = new String[]{mimeTypePDF, mimeTypeDocx, mimeTypeZip, mimeTypeRar, mimeTypeText, mimeTypeHtml};
 
-        Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, selectionMimeType, selectionArgsPdf, null);
+        String[] selectionArgs = new String[]{mimeTypePDF, mimeTypeDocx, mimeTypeZip, mimeTypeRar, mimeTypeText, mimeTypeHtml};
+        Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, selectionMimeType, selectionArgs, null);
         assert cursor != null;
         if (cursor.moveToLast()) {
             do {
-                String absolutePath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+                String absolutePath = cursor.getString(index);
                 FileModel model = new FileModel();
                 model.setPath(absolutePath);
                 model.setTitle(absolutePath.substring(absolutePath.lastIndexOf('/') + 1));
@@ -95,7 +99,6 @@ public class TildaFilePresenter {
 
                 }
                 list.add(model);
-                Log.d(TAG, "requestFiles: " + model.getFileMimeType().name() + " :::::: " + absolutePath);
             } while (cursor.moveToPrevious());
         }
         cursor.close();
@@ -108,7 +111,8 @@ public class TildaFilePresenter {
         assert cursor != null;
         if (cursor.moveToLast()) {
             do {
-                String absolutePath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+                String absolutePath = cursor.getString(index);
                 FileModel model = new FileModel();
                 model.setTitle(absolutePath.substring(absolutePath.lastIndexOf('/') + 1));
                 model.setPath(absolutePath);
@@ -126,7 +130,8 @@ public class TildaFilePresenter {
         assert cursor != null;
         if (cursor.moveToLast()) {
             do {
-                String absolutePath = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+                int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+                String absolutePath = cursor.getString(index);
                 FileModel model = new FileModel();
                 model.setPath(absolutePath);
                 model.setFileMimeType(FileMimeType.FILE_MIME_TYPE_VIDEO);

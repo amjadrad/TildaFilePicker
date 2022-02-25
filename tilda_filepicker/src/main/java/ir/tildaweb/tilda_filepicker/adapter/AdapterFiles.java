@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -44,8 +45,7 @@ public class AdapterFiles extends RecyclerView.Adapter<AdapterFiles.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_file, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -64,25 +64,25 @@ public class AdapterFiles extends RecyclerView.Adapter<AdapterFiles.ViewHolder> 
 
         switch (model.getFileMimeType()) {
             case FILE_MIME_TYPE_NONE:
-                holder.imageViewMimeType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_folder));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context , R.drawable.ic_folder));
                 break;
             case FILE_MIME_TYPE_PDF:
-                holder.imageViewMimeType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_pdf));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context ,R.drawable.ic_pdf));
                 break;
             case FILE_MIME_TYPE_DOCX:
-                holder.imageViewMimeType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_word));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context ,R.drawable.ic_word));
                 break;
             case FILE_MIME_TYPE_RAR:
-                holder.imageViewMimeType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_rar));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context ,R.drawable.ic_rar));
                 break;
             case FILE_MIME_TYPE_ZIP:
-                holder.imageViewMimeType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_zip));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context ,R.drawable.ic_zip));
                 break;
             case FILE_MIME_TYPE_HTML:
-                holder.imageViewMimeType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_html));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context ,R.drawable.ic_html));
                 break;
             case FILE_MIME_TYPE_TEXT:
-                holder.imageViewMimeType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_txt));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context ,R.drawable.ic_txt));
                 break;
         }
 
@@ -154,6 +154,7 @@ public class AdapterFiles extends RecyclerView.Adapter<AdapterFiles.ViewHolder> 
         this.selectedItemsSize = 0;
         notifyDataSetChanged();
     }
+
     public List<FileModel> getAllSelectedItems() {
         List<FileModel> tmp = new ArrayList<>();
         for (FileModel model : list) {

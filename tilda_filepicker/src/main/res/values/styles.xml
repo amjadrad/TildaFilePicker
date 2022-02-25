@@ -3,4 +3,15 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="fontFamily">@font/default_font</item>
     </style>
+
+    <!--    Bottom Sheet-->
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ModalBottomSheetDialog</item>
+    </style>
+
+    <style name="ModalBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:colorBackground">#00000000</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
 </resources>

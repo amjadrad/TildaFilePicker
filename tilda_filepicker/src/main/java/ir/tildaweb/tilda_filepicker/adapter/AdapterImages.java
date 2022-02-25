@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -30,6 +31,7 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
     private ImageListener imageListener;
     private int selectedItemsSize = 0;
 
+
     public interface ImageListener {
         void onImageSelectedSizeChanged(int selectedItemsSize);
     }
@@ -48,8 +50,7 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_image, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -64,10 +65,10 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
                 .into(holder.imageView);
 
         if (model.isSelected()) {
-            holder.viewSelectStatus.setBackground(context.getResources().getDrawable(R.drawable.bg_badge_enable));
+            holder.viewSelectStatus.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_badge_enable));
             holder.imageViewSelect.setVisibility(View.VISIBLE);
         } else {
-            holder.viewSelectStatus.setBackground(context.getResources().getDrawable(R.drawable.bg_badge_disable));
+            holder.viewSelectStatus.setBackground(ContextCompat.getDrawable(context, R.drawable.bg_badge_disable));
             holder.imageViewSelect.setVisibility(View.GONE);
         }
 
@@ -136,6 +137,5 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
         }
         return tmp;
     }
-
 
 }

@@ -2,41 +2,39 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorWhite"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_badge_light_curved"
     android:layoutDirection="rtl">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <View
-            android:layout_width="50dp"
-            android:layout_height="5dp"
+            android:layout_width="64dp"
+            android:layout_height="4dp"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bg_badge_info_curved" />
 
         <LinearLayout
             android:id="@+id/linearAfterSelect"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
             android:visibility="gone">
 
             <TextView
                 android:id="@+id/tvNumberSelectedItems"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
-                android:text="تعداد فایل انتخاب شده: 0"
                 android:textColor="@color/colorDark4"
                 android:textStyle="bold" />
 
@@ -50,7 +48,7 @@
                 android:background="@drawable/bg_badge_primary_curved"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="تایید"
+                android:text="@string/confirm"
                 android:textColor="@color/colorWhite"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -61,37 +59,148 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="10dp"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="8dp"
             app:cardElevation="0dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewImages"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp" />
+                android:layout_height="wrap_content">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewVideos"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:visibility="gone" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewMusics"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:visibility="gone" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewFiles"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:visibility="gone" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewVideos"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:visibility="gone" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewMusics"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewFiles"
+                    android:layout_width="match_parent"
+                    android:layout_height="320dp"
+                    android:visibility="gone" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/linearNoGallery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_gallery"
+                        app:tint="#434567" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/not_found_picture"
+                        android:textColor="#434567"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/linearNoVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_video_camera"
+                        app:tint="#434567" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/not_found_video"
+                        android:textColor="#434567"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/linearNoFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_folder"
+                        app:tint="#434567" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/not_found_file"
+                        android:textColor="#434567"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/linearNoMusic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_music_note"
+                        app:tint="#434567" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="@string/not_found_music"
+                        android:textColor="#434567"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </androidx.cardview.widget.CardView>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:background="@color/colorWhite"
             android:layoutDirection="rtl"
             android:scrollbars="none">
@@ -138,7 +247,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
-                            android:text="گالری"
+                            android:text="@string/gallery"
                             android:textColor="@color/colorGalleryDark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -180,7 +289,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
-                            android:text="ویدئو"
+                            android:text="@string/video"
                             android:textColor="@color/colorVideoDark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -222,7 +331,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
-                            android:text="فایل"
+                            android:text="@string/file"
                             android:textColor="@color/colorFileDark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -265,7 +374,7 @@
                             android:layout_gravity="center"
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="5dp"
-                            android:text="موزیک"
+                            android:text="@string/music"
                             android:textColor="@color/colorMusicDark"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -276,8 +385,7 @@
 
             </LinearLayout>
         </HorizontalScrollView>
-
-
     </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
