@@ -2,8 +2,6 @@ package ir.tildaweb.tilda_filepicker;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
@@ -16,11 +14,11 @@ import ir.tildaweb.tilda_filepicker.models.FileModel;
 
 public class TildaFilePresenter {
 
-    private String TAG = this.getClass().getName();
-    private String[] projection = {MediaStore.MediaColumns.DATA};
+    private final String TAG = this.getClass().getName();
+    private final String[] projection = {MediaStore.MediaColumns.DATA};
 
-    private OnDataPreparedListener onDataPreparedListener;
-    private Context context;
+    private final OnDataPreparedListener onDataPreparedListener;
+    private final Context context;
 
     public TildaFilePresenter(Context context, OnDataPreparedListener onDataPreparedListener) {
         this.onDataPreparedListener = onDataPreparedListener;
@@ -58,8 +56,10 @@ public class TildaFilePresenter {
         String mimeTypeHtml = MimeTypeMap.getSingleton().getMimeTypeFromExtension("html");
 
         String[] selectionArgs = new String[]{mimeTypePDF, mimeTypeDocx, mimeTypeZip, mimeTypeRar, mimeTypeText, mimeTypeHtml};
-        Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, selectionMimeType, selectionArgs, null);
+//        Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, selectionMimeType, selectionArgs, null);
+        Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
         assert cursor != null;
+        Log.d(TAG, "requestFiles: " + cursor.getCount());
         if (cursor.moveToLast()) {
             do {
                 int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
