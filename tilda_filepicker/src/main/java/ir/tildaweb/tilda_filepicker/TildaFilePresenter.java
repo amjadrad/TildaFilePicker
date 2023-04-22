@@ -25,7 +25,6 @@ public class TildaFilePresenter {
         this.context = context;
     }
 
-
     public void requestImages() {
         List<FileModel> list = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);

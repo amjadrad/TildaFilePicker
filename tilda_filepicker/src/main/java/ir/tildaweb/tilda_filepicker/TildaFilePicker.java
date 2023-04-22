@@ -3,30 +3,20 @@ package ir.tildaweb.tilda_filepicker;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ir.tildaweb.tilda_filepicker.adapter.AdapterFiles;
@@ -34,7 +24,6 @@ import ir.tildaweb.tilda_filepicker.adapter.AdapterImages;
 import ir.tildaweb.tilda_filepicker.adapter.AdapterMusics;
 import ir.tildaweb.tilda_filepicker.adapter.AdapterVideos;
 import ir.tildaweb.tilda_filepicker.databinding.BottomSheetSelectFilesBinding;
-import ir.tildaweb.tilda_filepicker.enums.FileMimeType;
 import ir.tildaweb.tilda_filepicker.enums.FileType;
 import ir.tildaweb.tilda_filepicker.models.FileModel;
 
@@ -50,8 +39,8 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
     private AttachType currentAttachType;
     private OnTildaFileSelectListener onTildaFileSelectListener;
     private FileType[] showJustTypes = {FileType.FILE_TYPE_ALL};
-    private Context context;
-    private boolean singleChoice = false;
+    private final Context context;
+    private boolean isSingleChoice = false;
 
     private enum AttachType {
         ATTACHE_TYPE_GALLERY,
@@ -75,7 +64,7 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
     }
 
     public void setSingleChoice() {
-        this.singleChoice = true;
+        this.isSingleChoice = true;
     }
 
     @Override
@@ -100,7 +89,7 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
         binding.btnConfirm.setOnClickListener(this);
 
         binding.recyclerViewImages.setLayoutManager(new GridLayoutManager(context, 3));
-        adapterImages = new AdapterImages(context);
+        adapterImages = new AdapterImages(context, isSingleChoice);
         adapterImages.setImageListener(this);
         binding.recyclerViewImages.setAdapter(adapterImages);
 
@@ -349,17 +338,16 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
 
     @Override
     public void onImageSelectedSizeChanged(int selectedItemsSize) {
-        Log.d(TAG, "onImageSelectedSizeChanged: " + singleChoice);
-        if (singleChoice) {
-            binding.btnConfirm.callOnClick();
+//        if (singleChoice) {
+//            binding.btnConfirm.callOnClick();
+//        } else {
+        binding.tvNumberSelectedItems.setText(String.format("%s: %s", "تعداد تصاویر انتخاب شده", selectedItemsSize));
+        if (selectedItemsSize == 0) {
+            binding.linearAfterSelect.setVisibility(View.GONE);
         } else {
-            binding.tvNumberSelectedItems.setText(String.format("%s: %s", "تعداد تصاویر انتخاب شده", selectedItemsSize));
-            if (selectedItemsSize == 0) {
-                binding.linearAfterSelect.setVisibility(View.GONE);
-            } else {
-                binding.linearAfterSelect.setVisibility(View.VISIBLE);
-            }
+            binding.linearAfterSelect.setVisibility(View.VISIBLE);
         }
+//        }
     }
 
     @Override

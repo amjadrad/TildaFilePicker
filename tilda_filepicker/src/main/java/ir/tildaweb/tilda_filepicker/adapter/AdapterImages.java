@@ -4,14 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.bumptech.glide.Glide;
 
@@ -22,14 +20,14 @@ import ir.tildaweb.tilda_filepicker.R;
 import ir.tildaweb.tilda_filepicker.dialog.DialogShowPicture;
 import ir.tildaweb.tilda_filepicker.models.FileModel;
 
-
 public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder> {
 
     private String TAG = getClass().getName();
-    private List<FileModel> list;
-    private Context context;
+    private final List<FileModel> list;
+    private final Context context;
     private ImageListener imageListener;
     private int selectedItemsSize = 0;
+    private final boolean isSingleChoice;
 
 
     public interface ImageListener {
@@ -40,9 +38,10 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
         this.imageListener = imageListener;
     }
 
-    public AdapterImages(Context context) {
+    public AdapterImages(Context context, boolean isSingleChoice) {
         this.list = new ArrayList<>();
         this.context = context;
+        this.isSingleChoice = isSingleChoice;
     }
 
 
@@ -73,6 +72,14 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
         }
 
         holder.coordinateSelectItem.setOnClickListener(v -> {
+            if (isSingleChoice) {
+                for (FileModel fileModel : list) {
+                    fileModel.setSelected(false);
+                    fileModel.setSelectionNumber(0);
+                    selectedItemsSize = 0;
+                }
+                notifyDataSetChanged();
+            }
             if (model.getSelectionNumber() > 0) {
                 model.setSelectionNumber(0);
                 model.setSelected(false);
@@ -82,6 +89,7 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
                 model.setSelected(true);
                 model.setSelectionNumber(1);
             }
+
             imageListener.onImageSelectedSizeChanged(selectedItemsSize);
             notifyItemChanged(position);
         });
@@ -98,7 +106,7 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private AppCompatImageView imageView;
         private AppCompatImageView imageViewSelect;
@@ -126,7 +134,6 @@ public class AdapterImages extends RecyclerView.Adapter<AdapterImages.ViewHolder
         this.selectedItemsSize = 0;
         notifyDataSetChanged();
     }
-
 
     public List<FileModel> getAllSelectedItems() {
         List<FileModel> tmp = new ArrayList<>();
