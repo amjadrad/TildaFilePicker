@@ -25,7 +25,7 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_folder" />
+                    app:srcCompat="@drawable/ic_tilda_folder" />
 
                 <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:id="@+id/coordinateSelectItem"

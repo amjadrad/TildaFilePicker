@@ -3,6 +3,8 @@ package ir.tildaweb.tilda_filepicker;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ir.tildaweb.tilda_filepicker.adapter.AdapterFiles;
@@ -41,6 +44,8 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
     private FileType[] showJustTypes = {FileType.FILE_TYPE_ALL};
     private final Context context;
     private boolean isSingleChoice = false;
+    private boolean isSearchable = false;
+    private List<FileModel> files;
 
     private enum AttachType {
         ATTACHE_TYPE_GALLERY,
@@ -67,6 +72,10 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
         this.isSingleChoice = true;
     }
 
+    public void setSearchable() {
+        this.isSearchable = true;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +96,42 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
         binding.cardViewNavMusic.setOnClickListener(this);
         binding.cardViewNavVideo.setOnClickListener(this);
         binding.btnConfirm.setOnClickListener(this);
+
+        if (isSearchable) {
+            binding.etSearch.setVisibility(View.VISIBLE);
+        }
+
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String text = binding.etSearch.getText().toString().trim();
+                if (text.length() > 0) {
+                    if (currentAttachType == AttachType.ATTACHE_TYPE_FILE) {
+                        ArrayList<FileModel> fileModels = new ArrayList<>();
+                        for (FileModel fileModel : files) {
+                            if (fileModel.getTitle().contains(text) || fileModel.getPath().contains(text)) {
+                                fileModels.add(fileModel);
+                            }
+                        }
+                        adapterFiles.clearAll();
+                        adapterFiles.addItems(fileModels);
+                    }
+                } else {
+                    adapterFiles.clearAll();
+                    adapterFiles.addItems(files);
+                }
+            }
+        });
 
         binding.recyclerViewImages.setLayoutManager(new GridLayoutManager(context, 3));
         adapterImages = new AdapterImages(context, isSingleChoice);
@@ -166,6 +211,7 @@ public class TildaFilePicker extends BottomSheetDialogFragment implements TildaF
 
     @Override
     public void onResponseFiles(List<FileModel> list) {
+        this.files = list;
         adapterFiles.clearAll();
         adapterFiles.addItems(list);
         if (list.size() == 0) {

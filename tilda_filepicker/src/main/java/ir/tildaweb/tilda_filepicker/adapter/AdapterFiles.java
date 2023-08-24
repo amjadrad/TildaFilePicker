@@ -64,7 +64,7 @@ public class AdapterFiles extends RecyclerView.Adapter<AdapterFiles.ViewHolder> 
 
         switch (model.getFileMimeType()) {
             case FILE_MIME_TYPE_NONE:
-                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context , R.drawable.ic_folder));
+                holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context , R.drawable.ic_tilda_folder));
                 break;
             case FILE_MIME_TYPE_PDF:
                 holder.imageViewMimeType.setImageDrawable(ContextCompat.getDrawable(context ,R.drawable.ic_pdf));

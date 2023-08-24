@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
             if (checkFilesPermission(this, 1)) {
                 TildaFilePicker tildaFilePicker = new TildaFilePicker(MainActivity.this, new FileType[]{FileType.FILE_TYPE_ALL});
                 tildaFilePicker.setSingleChoice();
+                tildaFilePicker.setSearchable();
                 tildaFilePicker.setOnTildaFileSelectListener(list -> {
-                    Log.d(TAG, "onCreate: " + list.get(0).getPath());
                     imageView.setImageBitmap(BitmapFactory.decodeFile(list.get(0).getPath()));
                 });
                 tildaFilePicker.show(getSupportFragmentManager());

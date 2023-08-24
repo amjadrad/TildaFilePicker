@@ -28,18 +28,19 @@ public class TildaFilePresenter {
     public void requestImages() {
         List<FileModel> list = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-        assert cursor != null;
-        if (cursor.moveToLast()) {
-            do {
-                int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
-                String absolutePath = cursor.getString(index);
-                FileModel model = new FileModel();
-                model.setPath(absolutePath);
-                model.setFileMimeType(FileMimeType.FILE_MIME_TYPE_IMAGE);
-                list.add(model);
-            } while (cursor.moveToPrevious());
+        if (cursor != null) {
+            if (cursor.moveToLast()) {
+                do {
+                    int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
+                    String absolutePath = cursor.getString(index);
+                    FileModel model = new FileModel();
+                    model.setPath(absolutePath);
+                    model.setFileMimeType(FileMimeType.FILE_MIME_TYPE_IMAGE);
+                    list.add(model);
+                } while (cursor.moveToPrevious());
+            }
+            cursor.close();
         }
-        cursor.close();
         onDataPreparedListener.onResponseImages(list);
     }
 
@@ -57,7 +58,6 @@ public class TildaFilePresenter {
         String[] selectionArgs = new String[]{mimeTypePDF, mimeTypeDocx, mimeTypeZip, mimeTypeRar, mimeTypeText, mimeTypeHtml};
 //        Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, selectionMimeType, selectionArgs, null);
         Cursor cursor = context.getContentResolver().query(MediaStore.Files.getContentUri("external"), projection, null, null, null);
-        assert cursor != null;
         Log.d(TAG, "requestFiles: " + cursor.getCount());
         if (cursor.moveToLast()) {
             do {
@@ -107,7 +107,6 @@ public class TildaFilePresenter {
     public void requestMusics() {
         List<FileModel> list = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-        assert cursor != null;
         if (cursor.moveToLast()) {
             do {
                 int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);
@@ -126,7 +125,6 @@ public class TildaFilePresenter {
     public void requestVideos() {
         List<FileModel> list = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
-        assert cursor != null;
         if (cursor.moveToLast()) {
             do {
                 int index = cursor.getColumnIndex(MediaStore.MediaColumns.DATA);

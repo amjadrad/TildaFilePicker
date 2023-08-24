@@ -55,6 +55,18 @@
 
         </LinearLayout>
 
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/selector_et_default"
+            android:gravity="center"
+            android:hint="جستجو ..."
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -155,7 +167,7 @@
                         android:layout_width="64dp"
                         android:layout_height="64dp"
                         android:layout_gravity="center"
-                        app:srcCompat="@drawable/ic_folder"
+                        app:srcCompat="@drawable/ic_tilda_folder"
                         app:tint="#434567" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -322,7 +334,7 @@
                             android:layout_height="18dp"
                             android:layout_gravity="center"
                             android:tint="@color/colorFileDark"
-                            app:srcCompat="@drawable/ic_folder" />
+                            app:srcCompat="@drawable/ic_tilda_folder" />
 
                         <TextView
                             android:id="@+id/tvNavFile"
